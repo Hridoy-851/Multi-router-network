@@ -12,16 +12,51 @@ The project also includes hands-on troubleshooting incidents involving interface
 
 ## Topology
 
+![Multi-Router OSPF Network Topology](topology.png)
+
+The network consists of two separate LANs connected through **Router0** and **Router1** using an OSPF Area 0 WAN link.
+
+### Network Structure
+
+| Network  | Address           | Purpose           |
+| -------- | ----------------- | ----------------- |
+| LAN 1    | `192.168.10.0/24` | PC0 network       |
+| WAN Link | `10.0.0.0/30`     | Router0 ↔ Router1 |
+| LAN 2    | `192.168.20.0/24` | PC1 network       |
+
+### Device Path
+
 ```text
-                 OSPF Area 0
-              10.0.0.0/30
-                    |
-                    |
 PC0 ── SW1 ── Router0 ───── Router1 ── SW2 ── PC1
-       LAN       |             |         LAN
-                 |             |
-          192.168.10.0/24  192.168.20.0/24
+       LAN      R1             R2       LAN
 ```
+
+### Router Interfaces
+
+**Router0**
+
+| Interface            | IP Address        | Network |
+| -------------------- | ----------------- | ------- |
+| `GigabitEthernet0/0` | `192.168.10.1/24` | LAN 1   |
+| `GigabitEthernet0/1` | `10.0.0.1/30`     | WAN     |
+
+**Router1**
+
+| Interface            | IP Address        | Network |
+| -------------------- | ----------------- | ------- |
+| `GigabitEthernet0/0` | `192.168.20.1/24` | LAN 2   |
+| `GigabitEthernet0/1` | `10.0.0.2/30`     | WAN     |
+
+### OSPF Configuration
+
+* **Routing Protocol:** OSPF
+* **OSPF Process ID:** `1`
+* **Area:** `0`
+* **Router0 Router ID:** `192.168.10.1`
+* **Router1 Router ID:** `192.168.20.1`
+
+OSPF dynamically exchanges routing information between Router0 and Router1, allowing devices on **LAN 1** and **LAN 2** to communicate with each other.
+
 
 ## Devices
 
