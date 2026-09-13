@@ -1,368 +1,267 @@
-# Multi-Router Network
+# Multi-Router OSPF Network
 
-A hands-on Cisco Packet Tracer project focused on building, configuring, and troubleshooting a multi-router network using IPv4, static routing, and OSPF.
+A Cisco Packet Tracer networking project demonstrating multi-router connectivity, OSPF dynamic routing, routing verification, troubleshooting, and network documentation.
 
-This project is part of my 6-month journey toward becoming a **Junior Network Engineer / NOC Engineer / Network Support Engineer**.
+## Project Overview
 
----
+This project was built to develop practical networking skills using Cisco Packet Tracer.
 
-## 🎯 Project Objective
+The network consists of two routers connecting two separate LANs. OSPF is used as the dynamic routing protocol between the routers.
 
-The objective of this project is to move beyond basic networking labs and develop practical skills in:
+The project also includes hands-on troubleshooting incidents involving interface failures, routing-table changes, and end-to-end connectivity testing.
 
-* Multi-router network configuration
-* IPv4 addressing and subnetting
-* Static routing
-* Dynamic routing with OSPF
-* OSPF neighbor relationships
-* Routing table analysis
-* Network troubleshooting
-* Connectivity verification
-* Cisco IOS CLI
-
-The project follows a practical learning cycle:
-
-> **Learn → Build → Break → Troubleshoot → Document → Explain**
-
----
-
-## 🌐 Network Topology
-
-Current topology:
+## Topology
 
 ```text
-                 Router-to-Router Link
+                 OSPF Area 0
               10.0.0.0/30
-                   
-PC0 ── SW1 ── Router0 ───────── Router1 ── SW2 ── PC1
-               │                    │
-        192.168.10.0/24       192.168.20.0/24
+                    |
+                    |
+PC0 ── SW1 ── Router0 ───── Router1 ── SW2 ── PC1
+       LAN       |             |         LAN
+                 |             |
+          192.168.10.0/24  192.168.20.0/24
 ```
 
----
+## Devices
 
-## 📋 IP Addressing
+| Device  | Role                     |
+| ------- | ------------------------ |
+| Router0 | Left-side LAN router     |
+| Router1 | Right-side LAN router    |
+| SW1     | Left-side access switch  |
+| SW2     | Right-side access switch |
+| PC0     | Left-side client         |
+| PC1     | Right-side client        |
 
-| Device  | Interface     | IP Address       | Purpose               |
-| ------- | ------------- | ---------------- | --------------------- |
-| PC0     | NIC           | 192.168.10.10/24 | Host                  |
-| Router0 | LAN Interface | 192.168.10.1/24  | Default Gateway       |
-| Router0 | G0/1          | 10.0.0.1/30      | Router-to-Router Link |
-| Router1 | G0/1          | 10.0.0.2/30      | Router-to-Router Link |
-| Router1 | LAN Interface | 192.168.20.1/24  | Default Gateway       |
-| PC1     | NIC           | 192.168.20.10/24 | Host                  |
+## IP Addressing
 
----
+| Device  | Interface | IP Address       | Network         |
+| ------- | --------- | ---------------- | --------------- |
+| Router0 | Gi0/0     | 192.168.10.1/24  | 192.168.10.0/24 |
+| Router0 | Gi0/1     | 10.0.0.1/30      | 10.0.0.0/30     |
+| Router0 | Loopback0 | 1.1.1.1/32       | OSPF Router ID  |
+| Router1 | Gi0/0     | 192.168.20.1/24  | 192.168.20.0/24 |
+| Router1 | Gi0/1     | 10.0.0.2/30      | 10.0.0.0/30     |
+| Router1 | Loopback0 | 2.2.2.2/32       | OSPF Router ID  |
+| PC0     | NIC       | 192.168.10.10/24 | 192.168.10.0/24 |
+| PC1     | NIC       | 192.168.20.10/24 | 192.168.20.0/24 |
 
-## 🔧 Technologies & Concepts
-
-### IPv4
-
-* IPv4 addressing
-* Subnet masks
-* Network and host addresses
-* /24 LAN networks
-* /30 point-to-point network
-
-### Routing
-
-* Static routing
-* Dynamic routing
-* OSPF
-* Routing table analysis
-* Remote network reachability
+## Routing Protocol
 
 ### OSPF
 
-* OSPF process configuration
-* Router ID
-* Network statements
-* OSPF neighbor adjacency
-* OSPF states
-* Route advertisement
-* OSPF verification
+OSPF is configured using:
 
-### Troubleshooting
+* Process ID: `1`
+* Area: `0`
+* Router0 Router ID: `1.1.1.1`
+* Router1 Router ID: `2.2.2.2`
 
-* Interface status analysis
-* OSPF neighbor troubleshooting
-* Ping-based connectivity testing
-* Root-cause identification
-* Configuration recovery
-* Verification after corrective action
+The routers form an OSPF adjacency across the `10.0.0.0/30` WAN link.
 
----
+### OSPF Neighbor Relationship
 
-# 🧪 Labs
-
-## Lab 01 — Multi-Router Static Routing
-
-**Status:** ✅ Completed
-
-### Objectives
-
-* Connect two routers.
-* Configure IPv4 addressing.
-* Establish router-to-router connectivity.
-* Configure static routes.
-* Allow communication between remote LANs.
-* Verify connectivity using `ping`.
-
-### Packet Tracer File
-
-`multi-router-static-routing.pkt`
-
----
-
-## Lab 02 — OSPF
-
-**Status:** 🔄 In Progress
-
-### Topics Practiced
-
-* OSPF process configuration
-* OSPF Router ID
-* OSPF network statements
-* OSPF neighbor adjacency
-* OSPF route learning
-* OSPF verification commands
-* Troubleshooting OSPF
-
-Important verification commands:
+Router0:
 
 ```text
-show ip ospf
-show ip ospf neighbor
-show ip route
-show ip protocols
+Neighbor ID: 2.2.2.2
+State: FULL/DR
+Address: 10.0.0.2
+Interface: GigabitEthernet0/1
 ```
 
----
-
-# 🚨 Troubleshooting Incidents
-
-A major goal of this project is to practice troubleshooting intentionally broken networks.
-
-Each incident is documented using:
-
-**Problem → Symptoms → Investigation → Root Cause → Solution → Verification → Lessons Learned**
-
----
-
-## Incident 01 — OSPF Neighbor Adjacency Down
-
-**Status:** ✅ Resolved
-
-### Problem
-
-PC0 could not communicate with PC1 on the remote LAN.
-
-### Root Cause
-
-Router0's router-to-router interface was manually disabled.
-
-The interface showed:
+Router1:
 
 ```text
+Neighbor ID: 1.1.1.1
+State: FULL/BDR
+Address: 10.0.0.1
+Interface: GigabitEthernet0/1
+```
+
+## OSPF Routes
+
+Router0 learns the remote LAN through OSPF:
+
+```text
+O 192.168.20.0/24 [110/2] via 10.0.0.2
+```
+
+Router1 learns the remote LAN through OSPF:
+
+```text
+O 192.168.10.0/24 [110/2] via 10.0.0.1
+```
+
+The administrative distance for OSPF is `110`.
+
+## Passive Interfaces
+
+The LAN interfaces are configured as passive OSPF interfaces.
+
+This prevents unnecessary OSPF neighbor formation toward end-user LANs while still allowing the LAN networks to be advertised.
+
+The router-to-router interfaces remain active for OSPF adjacency formation.
+
+## Verification
+
+The following commands were used to verify the network:
+
+```text
+show ip interface brief
+show ip ospf neighbor
+show ip route
+show ip route ospf
+show ip protocols
+show ip ospf interface
+show ip ospf database
+show arp
+ping
+```
+
+### End-to-End Connectivity
+
+PC0 successfully reaches PC1:
+
+```text
+PC0 → 192.168.20.10
+Packets: Sent = 4
+Received = 4
+Lost = 0
+```
+
+PC1 successfully reaches PC0:
+
+```text
+PC1 → 192.168.10.10
+Packets: Sent = 4
+Received = 4
+Lost = 0
+```
+
+## OSPF Cost Experiment
+
+An OSPF interface cost was temporarily modified during the lab to understand how OSPF calculates path metrics.
+
+For example:
+
+```text
+ip ospf cost 50
+```
+
+The route metric changed accordingly.
+
+After testing, the manual cost was removed and the interface returned to its normal cost.
+
+This demonstrated the difference between:
+
+* OSPF administrative distance
+* OSPF interface cost
+* Total OSPF path metric
+
+## Troubleshooting
+
+Three troubleshooting incidents were documented.
+
+### Incident 1 — OSPF Interface Down
+
+Investigated an OSPF connectivity problem caused by an administratively down router interface.
+
+Documentation:
+
+[`incident-01-ospf-interface-down.md`](troubleshooting/incident-01-ospf-interface-down.md)
+
+### Incident 2 — Intermittent First-Ping Loss
+
+Investigated an initial ping failure and determined that there was no persistent network fault. The behavior was consistent with normal ARP resolution.
+
+Documentation:
+
+[`incident-02-intermittent-ping.md`](troubleshooting/incident-02-intermittent-ping.md)
+
+### Incident 3 — Remote LAN Unreachable
+
+Investigated a complete loss of connectivity to the remote LAN.
+
+The root cause was an administratively shut down Router1 LAN interface:
+
+```text
+GigabitEthernet0/0
+192.168.20.1
 administratively down
 ```
 
-This prevented connectivity between Router0 and Router1 and consequently prevented the OSPF neighbor relationship from becoming operational.
-
-### Investigation
-
-Commands used:
+The interface was restored using:
 
 ```text
-show ip interface brief
-show ip ospf neighbor
-```
-
-### Solution
-
-The interface was enabled:
-
-```text
-interface gigabitEthernet 0/1
+interface gigabitEthernet0/0
 no shutdown
 ```
 
-### Verification
+OSPF then relearned the remote network and end-to-end connectivity was restored.
 
-The OSPF adjacency was restored to:
+Documentation:
 
-```text
-FULL
-```
+[`incident-03-remote-lan-unreachable.md`](troubleshooting/incident-03-remote-lan-unreachable.md)
 
-End-to-end connectivity was then verified:
+## Configuration Files
 
-```text
-ping 192.168.20.10
-```
+Final router configurations are available here:
 
-Result:
+* [Router0 Configuration](configs/router0-config.txt)
+* [Router1 Configuration](configs/router1-config.txt)
 
-```text
-Success rate: 100%
-```
+## Packet Tracer File
 
-Detailed documentation:
+The Cisco Packet Tracer project file is included in this repository:
 
-[`Incident 01 — OSPF Neighbor Down`](troubleshooting/incident-01-ospf-interface-down.md)
+`multi-router-ospf.pkt`
 
----
+## Skills Demonstrated
 
-# 🔍 Troubleshooting Methodology
-
-For network failures, I am practicing a systematic troubleshooting process:
-
-```text
-1. Identify the symptom
-          ↓
-2. Test connectivity
-          ↓
-3. Check interface status
-          ↓
-4. Check routing information
-          ↓
-5. Check routing protocol status
-          ↓
-6. Identify the root cause
-          ↓
-7. Apply corrective action
-          ↓
-8. Verify the fix
-          ↓
-9. Document the incident
-```
-
-The objective is to avoid making random configuration changes and instead identify the actual root cause.
-
----
-
-# 🖥️ Cisco IOS Commands Practiced
-
-### Interface Verification
-
-```text
-show ip interface brief
-```
-
-### Routing Table
-
-```text
-show ip route
-```
-
-### OSPF Neighbor Verification
-
-```text
-show ip ospf neighbor
-```
-
-### OSPF Configuration Information
-
-```text
-show ip ospf
-show ip protocols
-```
-
-### Connectivity Testing
-
-```text
-ping
-traceroute
-```
-
----
-
-# 📁 Current Project Structure
-
-```text
-multi-router-network/
-│
-├── README.md
-│
-├── multi-router-static-routing.pkt
-│
-└── troubleshooting/
-    └── incident-01-ospf-interface-down.md
-```
-
-This structure will be expanded as additional labs and troubleshooting incidents are completed.
-
----
-
-# 📈 Skills Developed
-
-Through this project I am developing practical experience with:
-
-* Cisco Packet Tracer
-* Cisco IOS CLI
 * IPv4 addressing
 * Subnetting
-* Static routing
+* Cisco IOS CLI
+* Router configuration
+* Static interface configuration
 * OSPF
-* Routing table analysis
-* OSPF neighbor troubleshooting
-* Network connectivity testing
-* Systematic troubleshooting
+* OSPF Router IDs
+* OSPF neighbor relationships
+* OSPF LSAs and LSDB concepts
+* OSPF cost and metrics
+* Passive interfaces
+* Routing-table analysis
+* ARP troubleshooting
+* End-to-end connectivity testing
+* Network troubleshooting
 * Technical documentation
+* GitHub project documentation
 
----
+## Key Lessons Learned
 
-# 🚀 Future Improvements
+This project strengthened practical understanding of how routers exchange routing information and how to troubleshoot failures systematically.
 
-Planned additions to this project include:
+Important lessons include:
 
-* More OSPF troubleshooting scenarios
-* Additional routers
-* Multiple LANs
-* VLAN implementation
-* Inter-VLAN routing
-* OSPF with multiple networks
-* ACL implementation
-* SSH management
-* Network security
-* Additional routing scenarios
-* 20+ troubleshooting incidents
+1. A `FULL` OSPF adjacency does not guarantee that every expected network is available.
+2. A connected network disappearing can cause its OSPF route to be withdrawn.
+3. OSPF cost affects the routing metric.
+4. Administrative distance and routing metric are different concepts.
+5. Passive interfaces prevent unnecessary OSPF adjacency formation on user LANs.
+6. ARP can affect the first packet of a connectivity test.
+7. Troubleshooting should be based on evidence rather than assumptions.
+8. End-to-end testing is essential after making a network change.
 
-The final version of the project will evolve into a more realistic enterprise network.
+## Project Status
 
----
+**Completed**
 
-# 📚 Learning Approach
+This project demonstrates a functional multi-router OSPF network with documented configuration, verification, and troubleshooting scenarios.
 
-This project is not intended to demonstrate only successful configurations.
+## Author
 
-I am intentionally creating, breaking, troubleshooting, and documenting network scenarios to develop practical problem-solving skills.
+**Hridoy Sheikh**
 
-> **Configuration is only part of networking.
-> Understanding why a network fails—and knowing how to fix it—is equally important.**
-
----
-
-## 👤 Author
-
-**Md. Hridoy Sheikh**
-
-4th-Year CSE Student
-Aspiring Junior Network Engineer
-
-### Career Focus
-
-* Junior Network Engineer
-* NOC Engineer
-* Network Support Engineer
-* IT Support / Network Operations
-
----
-
-## 📌 Project Status
-
-**Current Stage:** OSPF & Troubleshooting Development
-
-**Project Status:** 🟡 In Progress
-
-More labs, troubleshooting incidents, documentation, and enterprise networking concepts will be added as the project develops.
+Computer Science & Engineering Student
+Networking / Junior Network Engineer Career Path
