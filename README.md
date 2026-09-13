@@ -261,7 +261,7 @@ This project demonstrates a functional multi-router OSPF network with documented
 
 ## Author
 
-**Hridoy Sheikh**
+**Md. Hridoy Sheikh**
 
 Computer Science & Engineering Student
 Networking / Junior Network Engineer Career Path
